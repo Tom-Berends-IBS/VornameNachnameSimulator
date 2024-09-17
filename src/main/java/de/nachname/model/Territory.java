@@ -4,6 +4,9 @@ import de.nachname.exceptions.InvalidDimensionsException;
 import de.nachname.exceptions.PositionOutOfBoundsException;
 import de.nachname.exceptions.WallInFrontException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Territory {
 	private static final int MAX_WIDTH = 100;
 	private static final int MAX_HEIGHT = 100;
@@ -24,6 +27,10 @@ public class Territory {
 		}
 	}
 
+	private final Set<DimensionsChangeListener> dimensionsChangeListeners;
+	private final Set<HamsterChangeListener> hamsterChangeListeners;
+	private final Set<CellChangeListener> cellChangeListeners;
+
 	private final Cell[][] grid;
 	private final Hamster hamster;
 
@@ -31,11 +38,27 @@ public class Territory {
 	private int height;
 
 	public Territory(final int width, final int height) {
+		dimensionsChangeListeners = new HashSet<>();
+		hamsterChangeListeners = new HashSet<>();
+		cellChangeListeners = new HashSet<>();
+		
 		this.grid = new Cell[MAX_WIDTH][MAX_HEIGHT];
 		
 		extendGrid(width, height);
 
 		hamster = new Hamster(Direction.NORTH, 0, 0);
+	}
+
+	public void addDimensionsChangeListener(final DimensionsChangeListener listener) {
+		dimensionsChangeListeners.add(listener);
+	}
+
+	public void addHamsterChangeListener(final HamsterChangeListener listener) {
+		hamsterChangeListeners.add(listener);
+	}
+
+	public void addCellChangeListener(final CellChangeListener listener) {
+		cellChangeListeners.add(listener);
 	}
 
 	private void extendGrid(final int newWidth, final int newHeight) {
@@ -45,6 +68,8 @@ public class Territory {
 		this.height = newHeight;
 
 		extendGrid(grid, width, height);
+
+		dimensionsChangeListeners.forEach(listener -> listener.dimensionsChanged(width, height));
 	}
 
 	private boolean isInBounds(final int x, final int y) {
@@ -69,6 +94,8 @@ public class Territory {
 
 	public void setWall(final int x, final int y, final boolean wall) {
 		getCell(x, y).setWall(wall);
+
+		cellChangeListeners.forEach(listener -> listener.cellChanged(x, y));
 	}
 
 	public int getNumCorns(final int x, final int y) {
@@ -77,10 +104,14 @@ public class Territory {
 
 	public void setNumCorns(final int x, final int y, final int numCorns) {
 		getCell(x, y).setNumCorns(numCorns);
+
+		cellChangeListeners.forEach(listener -> listener.cellChanged(x, y));
 	}
 	
 	public void clear(final int x, final int y) {
 		getCell(x, y).clear();
+
+		cellChangeListeners.forEach(listener -> listener.cellChanged(x, y));
 	}
 
 	public Direction getHamsterDirection() {
@@ -89,6 +120,15 @@ public class Territory {
 
 	public void setHamsterDirection(final Direction direction) {
 		hamster.setDirection(direction);
+
+		final int hamsterX = hamster.getX();
+		final int hamsterY = hamster.getY();
+
+		hamsterChangeListeners.forEach(listener -> listener.hamsterChanged(hamsterX, hamsterY, hamsterX, hamsterY));
+	}
+	
+	public boolean isHamsterAt(final int x, final int y) {
+		return hamster.getX() == x && hamster.getY() == y;
 	}
 
 	public int getHamsterX() {
@@ -100,7 +140,7 @@ public class Territory {
 	}
 
 	public void setHamsterPosition(final int x, final int y) {
-		if(hamster.getX() == x && hamster.getY() == y) {
+		if(isHamsterAt(x, y)) {
 			return;
 		}
 		
@@ -109,8 +149,13 @@ public class Territory {
 		if(isWall(x, y)) {
 			throw new WallInFrontException();
 		}
-		
+
+		final int oldHamsterX = hamster.getX();
+		final int oldHamsterY = hamster.getY();
+
 		hamster.setPosition(x, y);
+
+		hamsterChangeListeners.forEach(listener -> listener.hamsterChanged(oldHamsterX, oldHamsterY, x, y));
 	}
 
 	public int getHamsterNumCorns() {

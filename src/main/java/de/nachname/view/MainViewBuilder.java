@@ -1,5 +1,6 @@
 package de.nachname.view;
 
+import de.nachname.model.Territory;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -9,6 +10,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
 public class MainViewBuilder {
+	private final Territory territory;
+
+	public MainViewBuilder(final Territory territory) {
+		this.territory = territory;
+	}
+
 	public Parent build() {
 		final BorderPane root = new BorderPane();
 
@@ -23,11 +30,20 @@ public class MainViewBuilder {
 		final SplitPane mainContent = new SplitPane();
 
 		final TextArea editor = new TextArea();
-		final ScrollPane simulationView = new ScrollPane();
+		final Node simulationView = buildSimulationView();
 
 		mainContent.getItems().addAll(editor, simulationView);
 
 		return mainContent;
+	}
+	
+	private Node buildSimulationView() {
+		final TerritoryView territoryView = new TerritoryView(territory);
+
+		final ScrollPane simulationView = new ScrollPane(territoryView);
+		simulationView.setFitToWidth(true);
+		simulationView.setFitToHeight(true);
+		return simulationView;
 	}
 
 	private Node buildStatusBar() {
