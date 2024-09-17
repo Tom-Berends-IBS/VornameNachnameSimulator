@@ -1,5 +1,6 @@
 package de.nachname.view;
 
+import de.nachname.controller.TerritoryViewController;
 import de.nachname.model.Direction;
 import de.nachname.model.Territory;
 import javafx.geometry.Insets;
@@ -42,96 +43,54 @@ public class TerritoryView extends StackPane {
 	}
 
 	private final Territory territory;
-	private final Canvas canvas;
 
-	public TerritoryView(final Territory territory) {
-		this.territory = territory;
+	private final Canvas backgroundCanvas;
+	private final Canvas mainCanvas;
 
-		canvas = new Canvas(territory.getWidth() * CELL_SIZE, territory.getHeight() * CELL_SIZE);
+	public TerritoryView(final TerritoryViewController controller) {
+		this.territory = controller.getTerritory();
 
-		StackPane.setMargin(canvas, MARGIN);
+		backgroundCanvas = new Canvas();
+		mainCanvas = new Canvas();
 
-		getChildren().add(canvas);
+		StackPane.setMargin(backgroundCanvas, MARGIN);
+		StackPane.setMargin(mainCanvas, MARGIN);
 
-		territory.addDimensionsChangeListener((newWidth, newHeight) -> {
-			canvas.setWidth(newWidth * CELL_SIZE);
-			canvas.setHeight(newHeight * CELL_SIZE);
+		getChildren().addAll(
+				backgroundCanvas,
+				mainCanvas
+		);
 
-			draw();
-		});
+		territory.addDimensionsChangeListener(this::resetCanvases);
 
 		territory.addHamsterChangeListener((oldI, oldJ, newI, newJ) -> {
-			final GraphicsContext gc = canvas.getGraphicsContext2D();
-
-			gc.setFill(BACKGROUND_COLOR);
-			gc.setStroke(Color.BLACK);
-
-			final double oldX = oldI * CELL_SIZE;
-			final double oldY = oldJ * CELL_SIZE;
-
-			final double newX = newI * CELL_SIZE;
-			final double newY = newJ * CELL_SIZE;
-
-			gc.fillRect(oldX, oldY, CELL_SIZE, CELL_SIZE);
-			gc.strokeRect(oldX, oldY, CELL_SIZE, CELL_SIZE);
-
-			gc.fillRect(newX, newY, CELL_SIZE, CELL_SIZE);
-			gc.strokeRect(newX, newY, CELL_SIZE, CELL_SIZE);
-
-			int numCorns = territory.getNumCorns(oldI, oldJ);
-			if(numCorns > 0) {
-				gc.drawImage(CORN_SPRITES[min(numCorns, 12) - 1], oldX, oldY);
-			}
-			if(territory.isWall(oldI, oldJ)) {
-				gc.drawImage(WALL_SPRITE, oldX, oldY);
-			}
-			if(territory.isHamsterAt(oldI, oldJ)) {
-				gc.drawImage(HAMSTER_SPRITES.get(territory.getHamsterDirection()), oldX, oldY);
-			}
-
-			numCorns = territory.getNumCorns(newI, newJ);
-			if(numCorns > 0) {
-				gc.drawImage(CORN_SPRITES[min(numCorns, 12) - 1], newX, newY);
-			}
-			if(territory.isWall(newI, newJ)) {
-				gc.drawImage(WALL_SPRITE, newX, newY);
-			}
-			if(territory.isHamsterAt(newI, newJ)) {
-				gc.drawImage(HAMSTER_SPRITES.get(territory.getHamsterDirection()), newX, newY);
-			}
+			drawCell(oldI, oldJ);
+			drawCell(newI, newJ);
 		});
 
-		territory.addCellChangeListener((i, j) -> {
-			final GraphicsContext gc = canvas.getGraphicsContext2D();
+		territory.addCellChangeListener(this::drawCell);
 
-			gc.setFill(BACKGROUND_COLOR);
-			gc.setStroke(Color.BLACK);
+		mainCanvas.setOnMouseClicked(controller::canvasClicked);
+		mainCanvas.setOnMousePressed(controller::canvasPressed);
+		mainCanvas.setOnMouseDragged(controller::canvasDragged);
 
-			final double x = i * CELL_SIZE;
-			final double y = j * CELL_SIZE;
+		resetCanvases(territory.getWidth(), territory.getHeight());
+	}
 
-			gc.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-			gc.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
+	private void resetCanvases(final int width, final int height) {
+		backgroundCanvas.setWidth(width * CELL_SIZE);
+		backgroundCanvas.setHeight(height * CELL_SIZE);
+		mainCanvas.setWidth(width * CELL_SIZE);
+		mainCanvas.setHeight(height * CELL_SIZE);
 
-			final int numCorns = territory.getNumCorns(i, j);
-			if(numCorns > 0) {
-				gc.drawImage(CORN_SPRITES[min(numCorns, 12) - 1], x, y);
-			}
-			if(territory.isWall(i, j)) {
-				gc.drawImage(WALL_SPRITE, x, y);
-			}
-			if(territory.isHamsterAt(i, j)) {
-				gc.drawImage(HAMSTER_SPRITES.get(territory.getHamsterDirection()), x, y);
-			}
-		});
-
+		drawBackground();
 		draw();
 	}
 
-	public void draw() {
-		final GraphicsContext gc = canvas.getGraphicsContext2D();
+	public void drawBackground() {
+		final GraphicsContext gc = backgroundCanvas.getGraphicsContext2D();
 
-		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		gc.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
 
 		gc.setFill(BACKGROUND_COLOR);
 		gc.setStroke(Color.BLACK);
@@ -143,18 +102,41 @@ public class TerritoryView extends StackPane {
 
 				gc.fillRect(x, y, CELL_SIZE, CELL_SIZE);
 				gc.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
-
-				final int numCorns = territory.getNumCorns(i, j);
-				if(numCorns > 0) {
-					gc.drawImage(CORN_SPRITES[min(numCorns, 12) - 1], x, y);
-				}
-				if(territory.isWall(i, j)) {
-					gc.drawImage(WALL_SPRITE, x, y);
-				}
-				if(territory.isHamsterAt(i, j)) {
-					gc.drawImage(HAMSTER_SPRITES.get(territory.getHamsterDirection()), x, y);
-				}
 			}
 		}
+	}
+
+	public void draw() {
+		final GraphicsContext gc = mainCanvas.getGraphicsContext2D();
+
+		gc.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
+
+		for(int i = 0; i < territory.getWidth(); i++) {
+			for(int j = 0; j < territory.getHeight(); j++) {
+				drawCell(gc, i, j);
+			}
+		}
+	}
+
+	public void drawCell(final GraphicsContext gc, final int i, final int j) {
+		final double x = i * CELL_SIZE;
+		final double y = j * CELL_SIZE;
+
+		gc.clearRect(x, y, CELL_SIZE, CELL_SIZE);
+
+		final int numCorns = territory.getNumCorns(i, j);
+		if(numCorns > 0) {
+			gc.drawImage(CORN_SPRITES[min(numCorns, 12) - 1], x, y);
+		}
+		if(territory.isHamsterAt(i, j)) {
+			gc.drawImage(HAMSTER_SPRITES.get(territory.getHamsterDirection()), x, y);
+		}
+		if(territory.isWall(i, j)) {
+			gc.drawImage(WALL_SPRITE, x, y);
+		}
+	}
+
+	public void drawCell(final int i, final int j) {
+		drawCell(mainCanvas.getGraphicsContext2D(), i, j);
 	}
 }
