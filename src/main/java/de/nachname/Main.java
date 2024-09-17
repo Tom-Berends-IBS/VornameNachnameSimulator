@@ -21,10 +21,77 @@ public class Main extends Application {
         final VBox controlBars = new VBox();
 
         final MenuBar menuBar = new MenuBar();
+        
         final Menu editorMenu = new Menu("Editor");
+        final MenuItem newMenuItem = new MenuItem("Neu");
+        final MenuItem openMenuItem = new MenuItem("Öffnen");
+        final MenuItem saveMenuItem = new MenuItem("Speichern");
+        final MenuItem compileMenuItem = new MenuItem("Kompilieren");
+        final MenuItem printMenuItem = new MenuItem("Drucken");
+        final MenuItem quitMenuItem = new MenuItem("Beenden");
+
+        newMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/New16.gif"))));
+        openMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Open16.gif"))));
+        saveMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Save16.gif"))));
+        printMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Print16.gif"))));
+
+        editorMenu.getItems().addAll(
+                newMenuItem,
+                openMenuItem,
+                saveMenuItem,
+                new SeparatorMenuItem(),
+                compileMenuItem,
+                printMenuItem,
+                new SeparatorMenuItem(),
+                quitMenuItem
+        );
+        
         final Menu territoryMenu = new Menu("Territory");
+        final MenuItem changeSizeMenuItem = new MenuItem("Größe ändern...");
+        final MenuItem hamsterMenuItem = new RadioMenuItem("Hamster platzieren");
+        final MenuItem cornMenuItem = new RadioMenuItem("Korn platzieren");
+        final MenuItem wallMenuItem = new RadioMenuItem("Mauer platzieren");
+        final MenuItem deleteMenuitem = new RadioMenuItem("kachel löschen");
+
+        territoryMenu.getItems().addAll(
+                changeSizeMenuItem,
+                new SeparatorMenuItem(),
+                hamsterMenuItem,
+                cornMenuItem,
+                wallMenuItem,
+                deleteMenuitem
+        );
+        
         final Menu hamsterMenu = new Menu("Hamster");
+        final MenuItem numCornsMenuItem = new MenuItem("Körner im Maul...");
+        final MenuItem turnLeftMenuItem = new MenuItem("linksUm");
+        final MenuItem moveMenuItem = new MenuItem("vor");
+        final MenuItem pickCornMenuItem = new MenuItem("nimm");
+        final MenuItem putCornMenuItem = new MenuItem("gib");
+
+        hamsterMenu.getItems().addAll(
+                numCornsMenuItem,
+                turnLeftMenuItem,
+                moveMenuItem,
+                pickCornMenuItem,
+                putCornMenuItem
+        );
+        
         final Menu simulationMenu = new Menu("Simulation");
+        final MenuItem startMenuItem = new MenuItem("Start/Fortsetzen");
+        final MenuItem pauseMenuItem = new MenuItem("Pause");
+        final MenuItem stopMenuItem = new MenuItem("Stopp");
+
+        startMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Play16.gif"))));
+        pauseMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Pause16.gif"))));
+        stopMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Stop16.gif"))));
+
+        simulationMenu.getItems().addAll(
+                startMenuItem,
+                pauseMenuItem,
+                stopMenuItem
+        );
+        
         menuBar.getMenus().addAll(editorMenu, territoryMenu, hamsterMenu, simulationMenu);
 
         final ToolBar toolBar = new ToolBar();
