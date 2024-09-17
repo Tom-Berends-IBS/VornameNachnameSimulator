@@ -90,6 +90,10 @@ public class Territory {
 	public void setHamsterDirection(final Direction direction) {
 		hamster.setDirection(direction);
 	}
+	
+	public boolean isHamsterAt(final int x, final int y) {
+		return hamster.getX() == x && hamster.getY() == y;
+	}
 
 	public int getHamsterX() {
 		return hamster.getX();
@@ -100,7 +104,7 @@ public class Territory {
 	}
 
 	public void setHamsterPosition(final int x, final int y) {
-		if(hamster.getX() == x && hamster.getY() == y) {
+		if(isHamsterAt(x, y)) {
 			return;
 		}
 		

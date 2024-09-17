@@ -1,5 +1,6 @@
 package de.nachname;
 
+import de.nachname.model.Territory;
 import de.nachname.view.MainViewBuilder;
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -13,7 +14,9 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
-        final Parent root = new MainViewBuilder().build(); 
+        final Territory territory = new Territory(15, 10);
+
+        final Parent root = new MainViewBuilder(territory).build();
         
         final Scene scene = new Scene(root);
 
