@@ -2,10 +2,7 @@ package de.nachname;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -18,6 +15,13 @@ public class Main extends Application {
     public void start(final Stage primaryStage) {
         final BorderPane root = new BorderPane();
 
+        final MenuBar menuBar = new MenuBar();
+        final Menu editorMenu = new Menu("Editor");
+        final Menu territoryMenu = new Menu("Territory");
+        final Menu hamsterMenu = new Menu("Hamster");
+        final Menu simulationMenu = new Menu("Simulation");
+        menuBar.getMenus().addAll(editorMenu, territoryMenu, hamsterMenu, simulationMenu);
+
         final SplitPane splitPane = new SplitPane();
         final TextArea textArea = new TextArea();
         final ScrollPane scrollPane = new ScrollPane();
@@ -25,6 +29,7 @@ public class Main extends Application {
 
         final Label label = new Label("Herzlich Willkommen!");
 
+        root.setTop(menuBar);
         root.setCenter(splitPane);
         root.setBottom(label);
         
