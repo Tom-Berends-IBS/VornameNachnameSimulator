@@ -1,5 +1,7 @@
 package de.nachname.model;
 
+import de.nachname.exceptions.*;
+
 public class HamsterController {
 	private final Territory territory;
 
@@ -15,7 +17,11 @@ public class HamsterController {
 		final int newX = oldX + direction.getXOffset();
 		final int newY = oldY + direction.getYOffset();
 
-		territory.setHamsterPosition(newX, newY);
+		try {
+			territory.setHamsterPosition(newX, newY);
+		} catch(final PositionOutOfBoundsException | WallInFrontException _) {
+			throw new MauerDaException();
+		}
 	}
 
 	public void linksUm() {
@@ -30,8 +36,12 @@ public class HamsterController {
 		final int hamsterNumCorns = territory.getHamsterNumCorns();
 		final int cellNumCorns = territory.getNumCorns(hamsterX, hamsterY);
 
-		territory.setNumCorns(hamsterX, hamsterY, cellNumCorns - 1);
-		territory.setHamsterNumCorns(hamsterNumCorns + 1);
+		try {
+			territory.setNumCorns(hamsterX, hamsterY, cellNumCorns - 1);
+			territory.setHamsterNumCorns(hamsterNumCorns + 1);
+		} catch(final IllegalArgumentException _) {
+			throw new KachelLeerException();
+		}
 	}
 
 	public void gib() {
@@ -41,8 +51,14 @@ public class HamsterController {
 		final int hamsterNumCorns = territory.getHamsterNumCorns();
 		final int cellNumCorns = territory.getNumCorns(hamsterX, hamsterY);
 
-		territory.setHamsterNumCorns(hamsterNumCorns - 1);
-		territory.setNumCorns(hamsterX, hamsterY, cellNumCorns + 1);
+		try {
+			territory.setHamsterNumCorns(hamsterNumCorns - 1);
+			territory.setNumCorns(hamsterX, hamsterY, cellNumCorns + 1);
+		} catch(final IllegalArgumentException _) {
+			throw new MaulLeerException();
+		} catch(final WallInFrontException _) {
+			throw new MauerDaException();
+		}
 	}
 
 	public boolean vornFrei() {
@@ -53,7 +69,11 @@ public class HamsterController {
 		final int forwardX = hamsterX + direction.getXOffset();
 		final int forwardY = hamsterY + direction.getYOffset();
 
-		return territory.isWall(forwardX, forwardY);
+		try {
+			return !territory.isWall(forwardX, forwardY);
+		} catch(final PositionOutOfBoundsException _) {
+			return false;
+		}
 	}
 
 	public boolean kornDa() {

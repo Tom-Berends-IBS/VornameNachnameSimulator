@@ -38,6 +38,10 @@ public class Hamster {
 	}
 
 	public void setNumCorns(final int numCorns) {
+		if(numCorns < 0) {
+			throw new IllegalArgumentException("numCorns must not be negative");
+		}
+		
 		this.numCorns = numCorns;
 	}
 }

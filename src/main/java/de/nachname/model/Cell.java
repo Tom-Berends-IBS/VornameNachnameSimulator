@@ -1,5 +1,8 @@
 package de.nachname.model;
 
+import de.nachname.exceptions.CellBlockedException;
+import de.nachname.exceptions.WallInFrontException;
+
 public class Cell {
 	private boolean wall;
 	private int numCorns;
@@ -9,6 +12,10 @@ public class Cell {
 	}
 
 	public void setWall(final boolean wall) {
+		if(numCorns > 0) {
+			throw new CellBlockedException();
+		}
+		
 		this.wall = wall;
 	}
 
@@ -17,6 +24,13 @@ public class Cell {
 	}
 
 	public void setNumCorns(final int numCorns) {
+		if(numCorns < 0) {
+			throw new IllegalArgumentException("numCorns must not be negative");
+		}
+		if(wall) {
+			throw new WallInFrontException();
+		}
+		
 		this.numCorns = numCorns;
 	}
 
