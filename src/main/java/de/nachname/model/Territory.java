@@ -8,6 +8,22 @@ public class Territory {
 	private static final int MAX_WIDTH = 100;
 	private static final int MAX_HEIGHT = 100;
 
+	private static void checkDimensions(final int width, final int height) {
+		if(width <= 0 || width > MAX_WIDTH || height <= 0 || height > MAX_HEIGHT) {
+			throw new InvalidDimensionsException();
+		}
+	}
+
+	private static void extendGrid(final Cell[][] grid, final int width, final int height) {
+		for(int x = 0; x < width; x++) {
+			for(int y = 0; y < height; y++) {
+				if(grid[x][y] == null) {
+					grid[x][y] = new Cell();
+				}
+			}
+		}
+	}
+
 	private final Cell[][] grid;
 	private final Hamster hamster;
 
@@ -15,61 +31,56 @@ public class Territory {
 	private int height;
 
 	public Territory(final int width, final int height) {
-		if(width < 0 || width > MAX_WIDTH || height < 0 || height > MAX_HEIGHT) {
-			throw new InvalidDimensionsException();
-		}
-		
-		this.width = width;
-		this.height = height;
-
 		this.grid = new Cell[MAX_WIDTH][MAX_HEIGHT];
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < height; y++) {
-				grid[x][y] = new Cell();
-			}
-		}
+		
+		extendGrid(width, height);
 
 		hamster = new Hamster(Direction.NORTH, 0, 0);
 	}
 
-	public boolean isWall(final int x, final int y) {
-		if(x < 0 || x >= width || y < 0 || y >= height) {
+	private void extendGrid(final int newWidth, final int newHeight) {
+		checkDimensions(newWidth, newHeight);
+
+		this.width = newWidth;
+		this.height = newHeight;
+
+		extendGrid(grid, width, height);
+	}
+
+	private boolean isInBounds(final int x, final int y) {
+		return x >= 0 && x < width && y >= 0 && y < height;
+	}
+
+	private void checkInBounds(final int x, final int y) {
+		if(!isInBounds(x, y)) {
 			throw new PositionOutOfBoundsException();
 		}
-		
-		return grid[x][y].isWall();
+	}
+
+	private Cell getCell(final int x, final int y) {
+		checkInBounds(x, y);
+
+		return grid[x][y];
+	}
+
+	public boolean isWall(final int x, final int y) {
+		return getCell(x, y).isWall();
 	}
 
 	public void setWall(final int x, final int y, final boolean wall) {
-		if(x < 0 || x >= width || y < 0 || y >= height) {
-			throw new PositionOutOfBoundsException();
-		}
-		
-		grid[x][y].setWall(wall);
+		getCell(x, y).setWall(wall);
 	}
 
 	public int getNumCorns(final int x, final int y) {
-		if(x < 0 || x >= width || y < 0 || y >= height) {
-			throw new PositionOutOfBoundsException();
-		}
-		
-		return grid[x][y].getNumCorns();
+		return getCell(x, y).getNumCorns();
 	}
 
 	public void setNumCorns(final int x, final int y, final int numCorns) {
-		if(x < 0 || x >= width || y < 0 || y >= height) {
-			throw new PositionOutOfBoundsException();
-		}
-		
-		grid[x][y].setNumCorns(numCorns);
+		getCell(x, y).setNumCorns(numCorns);
 	}
 	
 	public void clear(final int x, final int y) {
-		if(x < 0 || x >= width || y < 0 || y >= height) {
-			throw new PositionOutOfBoundsException();
-		}
-		
-		grid[x][y].clear();
+		getCell(x, y).clear();
 	}
 
 	public Direction getHamsterDirection() {
@@ -89,9 +100,11 @@ public class Territory {
 	}
 
 	public void setHamsterPosition(final int x, final int y) {
-		if(x < 0 || x >= width || y < 0 || y >= height) {
-			throw new PositionOutOfBoundsException();
+		if(hamster.getX() == x && hamster.getY() == y) {
+			return;
 		}
+		
+		checkInBounds(x, y);
 
 		if(isWall(x, y)) {
 			throw new WallInFrontException();
@@ -117,19 +130,8 @@ public class Territory {
 	}
 
 	public void setDimensions(final int newWidth, final int newHeight) {
-		if(newWidth < 0 || newWidth > MAX_WIDTH || newHeight < 0 || newHeight > MAX_HEIGHT) {
-			throw new InvalidDimensionsException();
-		}
+		checkDimensions(newWidth, newHeight);
 
-		this.width = newWidth;
-		this.height = newHeight;
-
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < height; y++) {
-				if(grid[x][y] == null) {
-					grid[x][y] = new Cell();
-				}
-			}
-		}
+		extendGrid(newWidth, newHeight);
 	}
 }
