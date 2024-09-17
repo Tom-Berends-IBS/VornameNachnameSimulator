@@ -1,14 +1,16 @@
 package de.nachname.view;
 
+import de.nachname.controller.ControlBarsController;
+import de.nachname.controller.PlaceSelection;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import static de.nachname.commons.Util.loadImage;
+import static de.nachname.controller.PlaceSelection.*;
 
 public class ToolBarBuilder {
 	private static final Image NEW_ICON;
@@ -50,8 +52,34 @@ public class ToolBarBuilder {
 	}
 
 	private static Node createButton(final Image icon) {
+		return createButton(icon, null);
+	}
+
+	private static Node createButton(final Image icon, final EventHandler<ActionEvent> onAction) {
 		final Button button = new Button();
+
 		button.setGraphic(new ImageView(icon));
+
+		if(onAction != null) {
+			button.setOnAction(onAction);
+		}
+
+		return button;
+	}
+
+	private final ControlBarsController controller;
+
+	public ToolBarBuilder(final ControlBarsController controller) {
+		this.controller = controller;
+	}
+
+	private Node createPlaceButton(final Image icon, final PlaceSelection placeKey) {
+		final ToggleButton button = new ToggleButton();
+
+		button.setGraphic(new ImageView(icon));
+
+		controller.getPlaceSelectionToggleGroup().addToggle(placeKey, button);
+
 		return button;
 	}
 
@@ -65,11 +93,11 @@ public class ToolBarBuilder {
 				createButton(SAVE_ICON),
 				createButton(COMPILE_ICON),
 				new Separator(),
-				createButton(TERRAIN_ICON),
-				createButton(HAMSTER_ICON),
-				createButton(CORN_ICON),
-				createButton(WALL_ICON),
-				createButton(DELETE_ICON),
+				createButton(TERRAIN_ICON, _ -> controller.changeDimensions()),
+				createPlaceButton(HAMSTER_ICON, HAMSTER),
+				createPlaceButton(CORN_ICON, CORN),
+				createPlaceButton(WALL_ICON, WALL),
+				createPlaceButton(DELETE_ICON, DELETE),
 				new Separator(),
 				createButton(HAMSTER_CORN_ICON),
 				createButton(HAMSTER_LEFT_ICON),

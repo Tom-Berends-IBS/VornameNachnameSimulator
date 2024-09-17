@@ -1,7 +1,7 @@
 package de.nachname;
 
+import de.nachname.controller.MainViewController;
 import de.nachname.model.Territory;
-import de.nachname.view.MainViewBuilder;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,7 +16,9 @@ public class Main extends Application {
     public void start(final Stage primaryStage) {
         final Territory territory = new Territory(15, 10);
 
-        final Parent root = new MainViewBuilder(territory).build();
+        final MainViewController mainViewController = new MainViewController(primaryStage, territory);
+
+        final Parent root = mainViewController.buildView();
         
         final Scene scene = new Scene(root);
 

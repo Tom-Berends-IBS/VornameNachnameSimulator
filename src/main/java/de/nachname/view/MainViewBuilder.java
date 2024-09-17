@@ -1,6 +1,6 @@
 package de.nachname.view;
 
-import de.nachname.model.Territory;
+import de.nachname.controller.MainViewController;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -10,16 +10,20 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
 public class MainViewBuilder {
-	private final Territory territory;
+	private final MainViewController controller;
 
-	public MainViewBuilder(final Territory territory) {
-		this.territory = territory;
+	private final ControlBarsBuilder controlBarsBuilder;
+
+	public MainViewBuilder(final MainViewController controller) {
+		this.controller = controller;
+
+		controlBarsBuilder = new ControlBarsBuilder(controller.getControlBarsController());
 	}
 
 	public Parent build() {
 		final BorderPane root = new BorderPane();
 
-		root.setTop(new ControlBarsBuilder().build());
+		root.setTop(controlBarsBuilder.build());
 		root.setCenter(buildMainContent());
 		root.setBottom(buildStatusBar());
 
@@ -38,7 +42,7 @@ public class MainViewBuilder {
 	}
 	
 	private Node buildSimulationView() {
-		final TerritoryView territoryView = new TerritoryView(territory);
+		final Node territoryView = controller.getTerritoryViewController().getView();
 
 		final ScrollPane simulationView = new ScrollPane(territoryView);
 		simulationView.setFitToWidth(true);
