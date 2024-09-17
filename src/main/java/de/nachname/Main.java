@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -29,6 +30,13 @@ public class Main extends Application {
         final MenuItem compileMenuItem = new MenuItem("Kompilieren");
         final MenuItem printMenuItem = new MenuItem("Drucken");
         final MenuItem quitMenuItem = new MenuItem("Beenden");
+
+        newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
+        openMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+        saveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+        compileMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+K"));
+        printMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+P"));
+        quitMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
 
         newMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/New16.gif"))));
         openMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Open16.gif"))));
@@ -69,6 +77,11 @@ public class Main extends Application {
         final MenuItem pickCornMenuItem = new MenuItem("nimm");
         final MenuItem putCornMenuItem = new MenuItem("gib");
 
+        turnLeftMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+L"));
+        moveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+V"));
+        pickCornMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+N"));
+        putCornMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+G"));
+
         hamsterMenu.getItems().addAll(
                 numCornsMenuItem,
                 turnLeftMenuItem,
@@ -81,6 +94,9 @@ public class Main extends Application {
         final MenuItem startMenuItem = new MenuItem("Start/Fortsetzen");
         final MenuItem pauseMenuItem = new MenuItem("Pause");
         final MenuItem stopMenuItem = new MenuItem("Stopp");
+
+        startMenuItem.setAccelerator(KeyCombination.valueOf("Ctrl+F11"));
+        stopMenuItem.setAccelerator(KeyCombination.valueOf("Ctrl+F12"));
 
         startMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Play16.gif"))));
         pauseMenuItem.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/icons/Pause16.gif"))));
