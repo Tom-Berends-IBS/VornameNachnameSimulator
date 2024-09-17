@@ -22,14 +22,14 @@ public class Main extends Application {
         final VBox controlBars = new VBox();
 
         final MenuBar menuBar = new MenuBar();
-        
-        final Menu editorMenu = new Menu("Editor");
-        final MenuItem newMenuItem = new MenuItem("Neu");
-        final MenuItem openMenuItem = new MenuItem("Öffnen");
-        final MenuItem saveMenuItem = new MenuItem("Speichern");
-        final MenuItem compileMenuItem = new MenuItem("Kompilieren");
-        final MenuItem printMenuItem = new MenuItem("Drucken");
-        final MenuItem quitMenuItem = new MenuItem("Beenden");
+
+        final Menu editorMenu = new Menu("_Editor");
+        final MenuItem newMenuItem = new MenuItem("_Neu");
+        final MenuItem openMenuItem = new MenuItem("_Öffnen");
+        final MenuItem saveMenuItem = new MenuItem("S_peichern");
+        final MenuItem compileMenuItem = new MenuItem("_Kompilieren");
+        final MenuItem printMenuItem = new MenuItem("_Drucken");
+        final MenuItem quitMenuItem = new MenuItem("_Beenden");
 
         newMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
         openMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
@@ -53,13 +53,13 @@ public class Main extends Application {
                 new SeparatorMenuItem(),
                 quitMenuItem
         );
-        
-        final Menu territoryMenu = new Menu("Territory");
-        final MenuItem changeSizeMenuItem = new MenuItem("Größe ändern...");
-        final MenuItem hamsterMenuItem = new RadioMenuItem("Hamster platzieren");
-        final MenuItem cornMenuItem = new RadioMenuItem("Korn platzieren");
-        final MenuItem wallMenuItem = new RadioMenuItem("Mauer platzieren");
-        final MenuItem deleteMenuitem = new RadioMenuItem("kachel löschen");
+
+        final Menu territoryMenu = new Menu("_Territory");
+        final MenuItem changeSizeMenuItem = new MenuItem("_Größe ändern...");
+        final MenuItem hamsterMenuItem = new RadioMenuItem("H_amster platzieren");
+        final MenuItem cornMenuItem = new RadioMenuItem("_Korn platzieren");
+        final MenuItem wallMenuItem = new RadioMenuItem("_Mauer platzieren");
+        final MenuItem deleteMenuitem = new RadioMenuItem("Kachel _löschen");
 
         territoryMenu.getItems().addAll(
                 changeSizeMenuItem,
@@ -69,13 +69,13 @@ public class Main extends Application {
                 wallMenuItem,
                 deleteMenuitem
         );
-        
-        final Menu hamsterMenu = new Menu("Hamster");
-        final MenuItem numCornsMenuItem = new MenuItem("Körner im Maul...");
-        final MenuItem turnLeftMenuItem = new MenuItem("linksUm");
-        final MenuItem moveMenuItem = new MenuItem("vor");
-        final MenuItem pickCornMenuItem = new MenuItem("nimm");
-        final MenuItem putCornMenuItem = new MenuItem("gib");
+
+        final Menu hamsterMenu = new Menu("_Hamster");
+        final MenuItem numCornsMenuItem = new MenuItem("_Körner im Maul...");
+        final MenuItem turnLeftMenuItem = new MenuItem("_linksUm");
+        final MenuItem moveMenuItem = new MenuItem("_vor");
+        final MenuItem pickCornMenuItem = new MenuItem("_nimm");
+        final MenuItem putCornMenuItem = new MenuItem("_gib");
 
         turnLeftMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+L"));
         moveMenuItem.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+V"));
@@ -89,11 +89,11 @@ public class Main extends Application {
                 pickCornMenuItem,
                 putCornMenuItem
         );
-        
-        final Menu simulationMenu = new Menu("Simulation");
-        final MenuItem startMenuItem = new MenuItem("Start/Fortsetzen");
-        final MenuItem pauseMenuItem = new MenuItem("Pause");
-        final MenuItem stopMenuItem = new MenuItem("Stopp");
+
+        final Menu simulationMenu = new Menu("_Simulation");
+        final MenuItem startMenuItem = new MenuItem("Start/_Fortsetzen");
+        final MenuItem pauseMenuItem = new MenuItem("_Pause");
+        final MenuItem stopMenuItem = new MenuItem("St_opp");
 
         startMenuItem.setAccelerator(KeyCombination.valueOf("Ctrl+F11"));
         stopMenuItem.setAccelerator(KeyCombination.valueOf("Ctrl+F12"));
